@@ -1,6 +1,12 @@
-FROM golang:1.15-alpine3.13
-RUN apk add git
-RUN go get -u github.com/cosmtrek/air
-WORKDIR /run
-COPY echo.go go.mod go.sum .air.toml ./
-ENTRYPOINT [ "air", "-c", ".air.toml" ]
+FROM golang:1.17-alpine3.13 as builder
+
+WORKDIR /build
+COPY echo.go go.mod go.sum ./
+
+RUN GOOS=linux GOARCH=amd64 go build -o echo-server echo.go
+
+FROM alpine
+
+COPY --from=builder /build/echo-server /echo-server
+
+CMD ["/echo-server", "-status=/status", "3002"]
