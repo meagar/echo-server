@@ -44,11 +44,13 @@ func main() {
 		}
 
 		data := struct {
+			Args   []string
 			Method string
 			URL    *url.URL
 			Header http.Header
 			Env    map[string]string
 		}{
+			Args:   os.Args,
 			Method: req.Method,
 			URL:    req.URL,
 			Header: req.Header,
@@ -88,6 +90,10 @@ var echoTemplateStr = `
 		<h3>Request Details</h3>
 
 		<table class="table">
+		<tr>
+			<th>Args</th>
+			<td>{{.Args}}</td>
+		</tr>
 		<tr>
 			<th>Method</th>
 			<td>{{.Method}}</td>
