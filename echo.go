@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
 	"html/template"
@@ -69,72 +70,7 @@ func handleStatus(rw http.ResponseWriter) {
 	rw.Write([]byte("ok"))
 }
 
-func init() {
-	echoTemplate = template.Must(template.New("").Parse(echoTemplateStr))
-}
+//go:embed index.gohtml
+var echoTemplateStr string
 
-var echoTemplate *template.Template
-var echoTemplateStr = `
-<!doctype html>
-<html lang="en">
-<head>
-	<title>ECHO!</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-</head>
-<body>
-	<div class="container">
-		<h1>Echo!</h1>
-
-		<p>This service echos details about each request back to the client.</p>
-
-		<h3>Request Details</h3>
-
-		<table class="table">
-		<tr>
-			<th>Args</th>
-			<td>{{.Args}}</td>
-		</tr>
-		<tr>
-			<th>Method</th>
-			<td>{{.Method}}</td>
-		</tr>
-		<tr>
-			<th>URL</th>
-			<td>{{.URL}}</td>
-		</tr>
-		<tr>
-			<th>Header</th>
-			<td>
-				<table>
-					{{range $key, $values := .Header}}
-						<tr>
-							<th>{{$key}}</th>
-							<td>
-							<ul>
-							{{range $value := $values}}
-								<li>{{$value}}</li>
-							{{end}}
-							</ul>
-							</td>
-						</tr>
-					{{end}}
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<th>ENV</th>
-			<td>
-				<table>
-					{{range $key, $value := .Env}}
-						<tr>
-							<th>{{$key}}</th>
-							<td>{{$value}}</th>
-						</tr>
-					{{end}}
-				</table>
-			</td>
-		</tr>
-		</table>
-	</div>
-</body>
-`
+var echoTemplate *template.Template = template.Must(template.New("").Parse(echoTemplateStr))
