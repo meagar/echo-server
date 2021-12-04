@@ -1,0 +1,41 @@
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: echo-server-web
+spec:
+  selector:
+    matchLabels:
+      app: echo-server
+      role: master
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: echo-server
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: gcr.io/PROJECT_ID/IMAGE:TAG
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3002
+  selector:
+    app: echo-server
+    role: master
+    tier: backend
